@@ -8,9 +8,19 @@ import ClockLocalStorage from "../storage/ClockLocalStorage.js";
 class Clock {
 
     /**
-     * @type {object} #settings
+     * @type {{}} #settings
      */
     #settings = null;
+
+    /**
+     * @type {HTMLDivElement[]} #itemsElements
+     */
+    #itemsElements = [];
+    
+    /**
+     * @type {HTMLElement} #wrapper
+     */
+    #wrapper = null;
 
     /**
      * @type {string} #appName
@@ -20,17 +30,19 @@ class Clock {
     /**
      * @type {string} #appVersion
      */
-    #appVersion = "V 0.0.1";
+    #appVersion = "V 1.0.0";
 
     /**
      * 
-     * @param {Object} settings 
+     * @param {HTMLElement} wrapper 
+     * @param {{}} settings 
      */
-    constructor(settings){
+    constructor(wrapper,settings){
 
         this.#appName.concat(this.#appVersion);
 
-        this.#settings = settings | this.load();
+        this.#settings = settings || this.load();
+        this.#wrapper = wrapper || document.body;
     }
 
     /**
@@ -55,6 +67,14 @@ class Clock {
 
     /**
      * 
+     */
+    #createCountDownComponent(){
+
+        /** @todo */
+    }
+
+    /**
+     * 
      * @param {number} days 
      * @param {number} hours 
      * @param {number} minutes 
@@ -62,10 +82,10 @@ class Clock {
      */
     setCountDown(days,hours,minutes,seconds){
 
-        this.#settings.days = days | '00';
-        this.#settings.hours = hours | '00';
-        this.#settings.minutes = minutes | '00';
-        this.#settings.seconds = seconds | '00';
+        this.#settings.days = days || '00';
+        this.#settings.hours = hours || '00';
+        this.#settings.minutes = minutes || '00';
+        this.#settings.seconds = seconds || '00';
 
         return this.save();
     }
@@ -77,7 +97,7 @@ class Clock {
      */
     setDays(days){
 
-        this.#settings.days = days | '00';
+        this.#settings.days = days || '00';
 
         return this.save();
     }
@@ -89,7 +109,7 @@ class Clock {
      */
     setHours(hours){
 
-        this.#settings.hours = hours | '00';
+        this.#settings.hours = hours || '00';
 
         return this.save();
     }
@@ -101,7 +121,7 @@ class Clock {
      */
     setMinutes(minutes){
 
-        this.#settings.minutes = minutes | '00';
+        this.#settings.minutes = minutes || '00';
 
         return this.save();
     }
@@ -113,7 +133,7 @@ class Clock {
      */
     setSeconds(seconds){
 
-        this.#settings.seconds = seconds | '00';
+        this.#settings.seconds = seconds || '00';
 
         return this.save();
     }
@@ -130,7 +150,48 @@ class Clock {
             hours:this.#settings.hours,
             minutes:this.#settings.minutes,
             seconds:this.#settings.seconds
-        }
+        };
+    }
+
+    /**
+     * 
+     * @param {{}} itemsValues
+     */
+    mapCountDown(itemsValues){
+
+        /** @todo */
+    }
+
+    /**
+     * 
+     */
+    startCountDown(){
+        
+        /** @todo */
+    }
+
+    /**
+     * 
+     */
+    stopCountDown(){
+
+        /** @todo */
+    }
+
+    /**
+     * 
+     */
+    resetCountDown(){
+
+        /** @todo */
+    }
+
+    /**
+     * 
+     */
+    updateCountDown(){
+
+        /** @todo */
     }
 
     /**

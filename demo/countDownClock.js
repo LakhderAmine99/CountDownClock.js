@@ -5,26 +5,25 @@ function CountDownClock(){
     this.run = function(){
 
         console.log("Countdown clock is up and running...");
+
+        init();
     }
     
     function init(){
 
+        const wrapper = document.querySelector('.wrapper');
+
         const settings = {
 
-
+            days:15,
+            hours:11,
+            minutes:12,
+            seconds:45
         }
 
-        let clockCountDown = new CLock(settings);
+        let clockCountDown = new CLock(wrapper,settings);
 
-        clockCountDownMapper(document.querySelectorAll('.countdown-item'),clockCountDown.getCountDown());
-    }
-
-    function clockCountDownMapper(uiElements,clockValues){
-
-        uiElements.forEach(element => {
-
-            element.setAttribute('data-value',clockValues[element.getAttribute('data-type')]);
-        });
+        clockCountDown.startCountDown();
     }
 }
 
