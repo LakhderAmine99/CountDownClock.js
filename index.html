@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⏳ CountDown Clock</title>
 
-    <script async src="./src/count-down-clock/countDownClock.js"></script>
+    <script async type="module" src="./demo/countDownClock.js"></script>
     <link rel="stylesheet" href="./assets/css/app.css">
 </head>
 <body>
@@ -15,7 +15,18 @@
 
         </header>
         <main class="wrapper">
-
+            <div class="count-down-clock-settings">
+                
+            </div>
+            <div class="count-down-clock-wrapper">
+                <div class="countdown-item" data-type="days" data-value="00"></div>
+                <div class="countdown-sep"> : </div>
+                <div class="countdown-item" data-type="hours" data-value="00"></div>
+                <div class="countdown-sep"> : </div>
+                <div class="countdown-item" data-type="minutes" data-value="00"></div>
+                <div class="countdown-sep"> : </div>
+                <div class="countdown-item" data-type="seconds" data-value="00"></div>
+            </div>
         </main>
         <footer>
             
