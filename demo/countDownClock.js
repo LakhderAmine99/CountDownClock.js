@@ -13,15 +13,15 @@ function CountDownClock(){
 
         const wrapper = document.querySelector('.wrapper');
 
-        const settings = {
+        // const settings = {
 
-            days:15,
-            hours:11,
-            minutes:12,
-            seconds:45
-        }
+        //     days:12,
+        //     hours:11,
+        //     minutes:1,
+        //     seconds:5
+        // }
 
-        let clockCountDown = new CLock(wrapper,settings);
+        let clockCountDown = new CLock(wrapper);
 
         clockCountDown.startCountDown();
     }

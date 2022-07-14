@@ -34,6 +34,11 @@ class Clock {
 
     /**
      * 
+     */
+    #timeOut = null;
+
+    /**
+     * 
      * @param {HTMLElement} wrapper 
      * @param {{}} settings 
      */
@@ -43,6 +48,8 @@ class Clock {
 
         this.#settings = settings || this.load();
         this.#wrapper = wrapper || document.body;
+
+        this.#createCountDownComponent();
     }
 
     /**
@@ -70,7 +77,38 @@ class Clock {
      */
     #createCountDownComponent(){
 
-        /** @todo */
+        const items = ['days','hours','minutes','seconds'];
+        const countDownWrapper = document.createElement('div');
+        
+        countDownWrapper.classList.add('count-down-clock-wrapper');
+        countDownWrapper.classList.add('flex-center');
+
+        let index = null;
+        let separator = null;
+
+        for(let item of items){
+            
+            index = items.indexOf(item);
+
+            this.#itemsElements[index] = document.createElement('div');
+            this.#itemsElements[index].classList.add('countdown-item');
+
+            this.#itemsElements[index].setAttribute('data-type',item);
+            this.#itemsElements[index].setAttribute('data-reset-value',this.#settings[item]);
+            this.#itemsElements[index].setAttribute('data-value',this.#settings[item]);
+            this.#itemsElements[index].innerHTML = this.#settings[item];
+
+            countDownWrapper.appendChild(this.#itemsElements[index]);
+
+            separator = document.createElement('div');
+            separator.classList.add('countdown-sep');
+            separator.innerHTML = ' : ';
+
+            if(index < items.length - 1)
+                countDownWrapper.appendChild(separator);
+        }
+
+        this.#wrapper.appendChild(countDownWrapper);
     }
 
     /**
@@ -87,7 +125,12 @@ class Clock {
         this.#settings.minutes = minutes || '00';
         this.#settings.seconds = seconds || '00';
 
-        return this.save();
+        this.#itemsElements.forEach(item => {
+
+            item.setAttribute('data-value',this.#settings[item.getAttribute('data-type')]);
+        });
+
+        this.save();
     }
 
     /**
@@ -166,8 +209,10 @@ class Clock {
      * 
      */
     startCountDown(){
-        
-        /** @todo */
+
+        let _this = this;
+
+        this.#timeOut = window.setInterval(() => this.updateCountDown(_this),1000);
     }
 
     /**
@@ -175,7 +220,7 @@ class Clock {
      */
     stopCountDown(){
 
-        /** @todo */
+        window.clearInterval(this.#timeOut);
     }
 
     /**
@@ -188,10 +233,40 @@ class Clock {
 
     /**
      * 
+     * @param {this} _this 
      */
-    updateCountDown(){
+    updateCountDown(_this){
 
-        /** @todo */
+        let seconds = parseInt(_this.#settings.seconds);
+        let minutes = parseInt(_this.#settings.minutes);
+        let hours = parseInt(_this.#settings.hours);
+        let days = parseInt(_this.#settings.days);
+
+        seconds -= 1;
+        _this.#itemsElements[3].innerHTML = seconds<10 ? '0'+seconds : seconds;
+
+        if(seconds == 0){
+
+            minutes -= 1;
+            seconds = 60;
+            _this.#itemsElements[2].innerHTML = minutes<10 ? '0'+minutes : minutes;
+
+            if(minutes == 0){
+
+                hours -= 1;
+                minutes = 60;
+                _this.#itemsElements[1].innerHTML = hours<10 ? '0'+hours : hours;
+
+                if(hours == 0){
+
+                    days -= 1;
+                    hours = 24;
+                    _this.#itemsElements[0].innerHTML = days<10 ? '0'+days : days;
+                }
+            }
+        }
+        
+        _this.setCountDown(days,hours,minutes,seconds);        
     }
 
     /**
