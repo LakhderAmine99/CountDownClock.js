@@ -45,6 +45,11 @@ class ClockLocalStorage {
             alert('Error occured while loading items !',e);
         }
     }
+
+    static remove(key){
+
+        localStorage.removeItem(key);
+    }
 }
 
 export default ClockLocalStorage;

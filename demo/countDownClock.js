@@ -13,17 +13,17 @@ function CountDownClock(){
 
         const wrapper = document.querySelector('.wrapper');
 
-        // const settings = {
+        const settings = {
 
-        //     days:12,
-        //     hours:11,
-        //     minutes:1,
-        //     seconds:5
-        // }
+            days:1,
+            hours:1,
+            minutes:1,
+            seconds:5
+        };
 
-        let clockCountDown = new CLock(wrapper);
+        let clockCountDown = new CLock(wrapper,settings);
 
-        clockCountDown.startCountDown();
+        clockCountDown.start();
     }
 }
 

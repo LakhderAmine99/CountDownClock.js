@@ -46,7 +46,8 @@ class Clock {
 
         this.#appName.concat(this.#appVersion);
 
-        this.#settings = settings || this.load();
+        this.#settings = this.load() ? this.load() : settings;
+
         this.#wrapper = wrapper || document.body;
 
         this.#createCountDownComponent();
@@ -58,7 +59,7 @@ class Clock {
      * @param {any} value 
      * @returns True if the settings successfuly setting up , false otherwise.
      */
-    setSetting(key,value){
+    #setSetting(key,value){
 
         if(key && value){
    
@@ -70,6 +71,22 @@ class Clock {
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @param {{}} settings 
+     */
+    setSettings(settings){
+
+        this.#settings = settings;
+
+        this.#setSetting('days',this.#settings['days']);
+        this.#setSetting('hours',this.#settings['hours']);
+        this.#setSetting('minutes',this.#settings['minutes']);
+        this.#setSetting('seconds',this.#settings['seconds']);
+
+        this.save();
     }
 
     /**
@@ -96,7 +113,8 @@ class Clock {
             this.#itemsElements[index].setAttribute('data-type',item);
             this.#itemsElements[index].setAttribute('data-reset-value',this.#settings[item]);
             this.#itemsElements[index].setAttribute('data-value',this.#settings[item]);
-            this.#itemsElements[index].innerHTML = this.#settings[item];
+
+            this.#itemsElements[index].innerHTML = parseInt(this.#settings[item])<10 ? '0'+this.#settings[item] : this.#settings[item];
 
             countDownWrapper.appendChild(this.#itemsElements[index]);
 
@@ -120,10 +138,10 @@ class Clock {
      */
     setCountDown(days,hours,minutes,seconds){
 
-        this.#settings.days = days || '00';
-        this.#settings.hours = hours || '00';
-        this.#settings.minutes = minutes || '00';
-        this.#settings.seconds = seconds || '00';
+        this.#settings.days = days;
+        this.#settings.hours = hours;
+        this.#settings.minutes = minutes;
+        this.#settings.seconds = seconds;
 
         this.#itemsElements.forEach(item => {
 
@@ -136,49 +154,45 @@ class Clock {
     /**
      * 
      * @param {number} days 
-     * @returns 
      */
     setDays(days){
 
-        this.#settings.days = days || '00';
+        this.#settings.days = days;
 
-        return this.save();
+        this.save();
     }
 
     /**
      * 
      * @param {number} hours 
-     * @returns 
      */
     setHours(hours){
 
-        this.#settings.hours = hours || '00';
+        this.#settings.hours = hours;
 
-        return this.save();
+        this.save();
     }
 
     /**
      * 
      * @param {number} minutes 
-     * @returns 
      */
     setMinutes(minutes){
 
-        this.#settings.minutes = minutes || '00';
+        this.#settings.minutes = minutes;
 
-        return this.save();
+        this.save();
     }
 
     /**
      * 
      * @param {number} seconds 
-     * @returns 
      */
     setSeconds(seconds){
 
-        this.#settings.seconds = seconds || '00';
+        this.#settings.seconds = seconds;
 
-        return this.save();
+        this.save();
     }
 
     /**
@@ -198,27 +212,16 @@ class Clock {
 
     /**
      * 
-     * @param {{}} itemsValues
      */
-    mapCountDown(itemsValues){
+    start(){
 
-        /** @todo */
+        this.#timeOut = window.setInterval(() => this.update(this),1000);
     }
 
     /**
      * 
      */
-    startCountDown(){
-
-        let _this = this;
-
-        this.#timeOut = window.setInterval(() => this.updateCountDown(_this),1000);
-    }
-
-    /**
-     * 
-     */
-    stopCountDown(){
+    stop(){
 
         window.clearInterval(this.#timeOut);
     }
@@ -226,16 +229,22 @@ class Clock {
     /**
      * 
      */
-    resetCountDown(){
+    reset(){
 
-        /** @todo */
+        this.setCountDown(
+
+            this.#itemsElements[0].getAttribute('data-reset-value'),
+            this.#itemsElements[1].getAttribute('data-reset-value'),
+            this.#itemsElements[2].getAttribute('data-reset-value'),
+            this.#itemsElements[3].getAttribute('data-reset-value')
+        );
     }
 
     /**
      * 
      * @param {this} _this 
      */
-    updateCountDown(_this){
+    update(_this){
 
         let seconds = parseInt(_this.#settings.seconds);
         let minutes = parseInt(_this.#settings.minutes);
@@ -250,17 +259,19 @@ class Clock {
             minutes -= 1;
             seconds = 60;
             _this.#itemsElements[2].innerHTML = minutes<10 ? '0'+minutes : minutes;
-
+            
             if(minutes == 0){
-
+                
                 hours -= 1;
                 minutes = 60;
+                _this.#itemsElements[2].innerHTML = minutes<10 ? '0'+minutes : minutes;
                 _this.#itemsElements[1].innerHTML = hours<10 ? '0'+hours : hours;
-
+                
                 if(hours == 0){
-
+                    
                     days -= 1;
                     hours = 24;
+                    _this.#itemsElements[1].innerHTML = hours<10 ? '0'+hours : hours;
                     _this.#itemsElements[0].innerHTML = days<10 ? '0'+days : days;
                 }
             }
@@ -285,6 +296,14 @@ class Clock {
     load(){
 
         return ClockLocalStorage.load(this.#appName);
+    }
+
+    /**
+     * 
+     */
+    remove(){
+
+        ClockLocalStorage.remove(this.#appName);
     }
 }
 
