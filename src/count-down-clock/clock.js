@@ -16,6 +16,31 @@ class Clock {
      * @type {HTMLDivElement[]} #itemsElements
      */
     #itemsElements = [];
+
+    /**
+     * @type {HTMLDivElement[]} #settingsMenuLabels
+     */
+    #settingsMenuLabels = [];
+
+    /**
+     * @type {HTMLDivElement[]} #editableItemsElements
+     */
+    #editableItemsElements = [];
+
+    /**
+     * @type {HTMLDivElement[]} #optionalSettingsElements
+     */
+    #optionalSettingsElements = [];
+
+    /**
+     * @type {HTMLDivElement[]} #controlSettingsElements
+     */
+    #controlSettingsElements = [];
+
+    /**
+     * @type {HTMLElement} #settingsPanelWrapper
+     */
+    #settingsPanelWrapper = null;
     
     /**
      * @type {HTMLElement} #wrapper
@@ -37,6 +62,8 @@ class Clock {
      */
     #timeOut = null;
 
+    #isStarted = false;
+
     /**
      * 
      * @param {HTMLElement} wrapper 
@@ -46,11 +73,11 @@ class Clock {
 
         this.#appName.concat(this.#appVersion);
 
-        this.#settings = this.load() ? this.load() : settings;
+        this.#settings = this.#load() ? this.#load() : settings;
 
         this.#wrapper = wrapper || document.body;
 
-        this.#createCountDownComponent();
+        this.#initComponents();
     }
 
     /**
@@ -86,7 +113,88 @@ class Clock {
         this.#setSetting('minutes',this.#settings['minutes']);
         this.#setSetting('seconds',this.#settings['seconds']);
 
-        this.save();
+        this.#save();
+    }
+
+    /**
+     * 
+     */
+    #initComponents(){
+
+        this.#createCountDownComponent();
+        this.#createSettingsMenuComponent('Edit Timer','Controls','Visual Options');
+
+        this.#createSettingsPanelWrapperComponent();
+
+        this.#createSettingComponent('input',this.#editableItemsElements,['days','hours','minutes','seconds'],{
+
+            title:'Edit Timer',
+            childClass:'option-item',
+            subChildClass:'editable-item'
+        });
+
+        this.#createSettingComponent('div',this.#controlSettingsElements,['start','stop','reset'],{
+
+            title:'Controls',
+            childClass:'option-item',
+            subChildClass:'control-item'
+        });
+
+        this.#createSettingComponent('div',this.#optionalSettingsElements,['opacity','color','size'],{
+
+            title:'visual Options',
+            childClass:'option-item',
+            subChildClass:'control-item'
+        });
+
+        this.#connectEventListeners();
+    }
+
+    /**
+     * 
+     * @param {string} elementType 
+     * @param {HTMLElement} elements 
+     * @param {[]} labels 
+     * @param {{}} componentSettings 
+     */
+    #createSettingComponent(elementType,elements,labels,componentSettings){
+
+        const itemsWrapper = document.createElement('div');
+
+        itemsWrapper.classList.add('items-wrapper','flex-center','hide');
+
+        const wrapperTitle = document.createElement('div');
+
+        wrapperTitle.classList.add('panel-title');
+        wrapperTitle.innerHTML = componentSettings.title;
+
+        itemsWrapper.appendChild(wrapperTitle);
+
+        let index = null;
+
+        for(let label of labels){
+
+            index = labels.indexOf(label);
+
+            elements[index] = document.createElement(elementType);
+
+            elements[index].setAttribute('data-option',label);
+
+            if(elementType === 'input'){
+
+                elements[index].value = this.#itemsElements[index].innerHTML;
+            
+            }else{
+
+                elements[index].innerHTML = label;
+            }
+
+            elements[index].classList.add(componentSettings.childClass,componentSettings.subChildClass);
+
+            itemsWrapper.appendChild(elements[index]);
+        }
+
+        this.#settingsPanelWrapper.appendChild(itemsWrapper);
     }
 
     /**
@@ -131,6 +239,175 @@ class Clock {
 
     /**
      * 
+     */
+    #createSettingsPanelWrapperComponent(){
+
+        this.#settingsPanelWrapper = document.createElement('div');
+        this.#settingsPanelWrapper.classList.add('setting-panel','hide');
+
+        this.#wrapper.appendChild(this.#settingsPanelWrapper);
+    }
+
+    /**
+     * @param {string} labels
+     */
+    #createSettingsMenuComponent(...labels){
+
+        const settingsWrapper = document.createElement('div');
+        settingsWrapper.classList.add('settings-wrapper');
+        settingsWrapper.classList.add('flex-center');
+
+        let index = null;
+
+        for(let label of labels){
+
+            index = labels.indexOf(label);
+
+            this.#settingsMenuLabels[index] = document.createElement('div');
+            this.#settingsMenuLabels[index].classList.add('setting-label','flex-center');
+            this.#settingsMenuLabels[index].setAttribute('data-menu',label);
+            this.#settingsMenuLabels[index].innerHTML = label;
+
+            settingsWrapper.appendChild(this.#settingsMenuLabels[index]);
+        }
+
+        this.#wrapper.prepend(settingsWrapper);
+    }
+
+    /**
+     * 
+     */
+    #connectEventListeners(){
+
+        this.#settingsMenuLabels.forEach(label => label.addEventListener('click',(e) => this.#handlePanelVisibilty(e),false));
+
+        this.#controlSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleControlSettings(e),false));
+        this.#optionalSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleOptionSettings(e),false));
+        this.#editableItemsElements.forEach(element => element.addEventListener('click',(e) => this.#handleEditableSettings(e),false));
+    }
+
+    /**
+     * 
+     */
+    #handlePanelVisibilty(e){
+
+        let menu = e.target.getAttribute('data-menu');
+
+        this.#settingsPanelWrapper.classList.remove('hide');
+
+        switch(menu){
+
+            case 'Edit Timer':
+                this.#settingsPanelWrapper.children[0].classList.remove('hide');
+                
+                window.setTimeout(() => {
+
+                    this.#settingsPanelWrapper.children[0].classList.add('fade-in');
+
+                },400);
+
+                this.#settingsPanelWrapper.children[1].classList.add('hide');
+                this.#settingsPanelWrapper.children[2].classList.add('hide');
+            break
+
+            case 'Controls':
+                this.#settingsPanelWrapper.children[0].classList.add('hide');
+                this.#settingsPanelWrapper.children[1].classList.remove('hide');
+                this.#settingsPanelWrapper.children[2].classList.add('hide');
+
+                window.setTimeout(() => {
+
+                    this.#settingsPanelWrapper.children[1].classList.add('fade-in');
+
+                },400);
+            break
+
+            case 'Visual Options':
+                this.#settingsPanelWrapper.children[0].classList.add('hide');
+                this.#settingsPanelWrapper.children[1].classList.add('hide');
+                this.#settingsPanelWrapper.children[2].classList.remove('hide');
+
+                window.setTimeout(() => {
+
+                    this.#settingsPanelWrapper.children[2].classList.add('fade-in');
+
+                },400);
+            break
+        }
+    }
+
+    #handleControlSettings(e){
+
+        let target = e.target;
+        let option = target.getAttribute('data-option');
+        let firstSiblingChild = target.parentElement.children[0];
+
+        if(option !== 'reset'){
+
+            while(firstSiblingChild){
+                
+                if(firstSiblingChild.classList.contains('selected')){
+                    
+                    firstSiblingChild.classList.remove('selected');
+
+                    if(option === 'stop')
+                        firstSiblingChild.classList.remove('start');
+                    else
+                        firstSiblingChild.classList.remove('stop');
+                }
+                
+                firstSiblingChild = firstSiblingChild.nextSibling;
+            }
+
+        }
+
+        target.classList.add('selected',option);
+
+        switch(option){
+
+            case 'start':
+
+                if(!this.#isStarted){
+   
+                    this.start();
+                }
+
+            break;
+
+            case 'stop':
+
+                if(this.#isStarted){
+
+                    this.stop();
+                }
+
+            break;
+
+            case 'reset':
+                this.reset();
+            break
+        }
+    }
+
+    /**
+     * 
+     * @param {*} e 
+     */
+    #handleOptionSettings(e){
+
+    }
+
+    /**
+     * 
+     * @param {*} e 
+     */
+    #handleEditableSettings(e){
+
+
+    }
+
+    /**
+     * 
      * @param {number} days 
      * @param {number} hours 
      * @param {number} minutes 
@@ -148,7 +425,7 @@ class Clock {
             item.setAttribute('data-value',this.#settings[item.getAttribute('data-type')]);
         });
 
-        this.save();
+        this.#save();
     }
 
     /**
@@ -159,7 +436,7 @@ class Clock {
 
         this.#settings.days = days;
 
-        this.save();
+        this.#save();
     }
 
     /**
@@ -170,7 +447,7 @@ class Clock {
 
         this.#settings.hours = hours;
 
-        this.save();
+        this.#save();
     }
 
     /**
@@ -181,7 +458,7 @@ class Clock {
 
         this.#settings.minutes = minutes;
 
-        this.save();
+        this.#save();
     }
 
     /**
@@ -192,7 +469,7 @@ class Clock {
 
         this.#settings.seconds = seconds;
 
-        this.save();
+        this.#save();
     }
 
     /**
@@ -215,7 +492,8 @@ class Clock {
      */
     start(){
 
-        this.#timeOut = window.setInterval(() => this.update(this),1000);
+        this.#isStarted = true;
+        this.#timeOut = window.setInterval(() => this.#update(this),1000);
     }
 
     /**
@@ -223,6 +501,7 @@ class Clock {
      */
     stop(){
 
+        this.#isStarted = false;
         window.clearInterval(this.#timeOut);
     }
 
@@ -241,10 +520,10 @@ class Clock {
     }
 
     /**
-     * 
+     *  
      * @param {this} _this 
      */
-    update(_this){
+    #update(_this){
 
         let seconds = parseInt(_this.#settings.seconds);
         let minutes = parseInt(_this.#settings.minutes);
@@ -284,7 +563,7 @@ class Clock {
      * 
      * @returns 
      */
-    save(){
+    #save(){
 
         return ClockLocalStorage.save(this.#appName,this.#settings);
     }
@@ -293,7 +572,7 @@ class Clock {
      * 
      * @returns 
      */
-    load(){
+    #load(){
 
         return ClockLocalStorage.load(this.#appName);
     }
