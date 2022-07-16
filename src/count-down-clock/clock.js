@@ -64,6 +64,8 @@ class Clock {
 
     #isStarted = false;
 
+    #isStateChanged = false;
+
     /**
      * 
      * @param {HTMLElement} wrapper 
@@ -283,7 +285,7 @@ class Clock {
 
         this.#controlSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleControlSettings(e),false));
         this.#optionalSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleOptionSettings(e),false));
-        this.#editableItemsElements.forEach(element => element.addEventListener('click',(e) => this.#handleEditableSettings(e),false));
+        this.#editableItemsElements.forEach(element => element.addEventListener('change',(e) => this.#handleEditableSettings(e),false));
     }
 
     /**
@@ -403,7 +405,33 @@ class Clock {
      */
     #handleEditableSettings(e){
 
+        let target = e.target;
+        let option = target.getAttribute('data-option');
+        let value = parseInt(target.value) || 1;
 
+        target.value = value;
+
+        switch(option){
+
+            case 'days':
+                this.setDays(value);
+            break;
+
+            case 'hours':
+                this.setHours(value);
+            break;
+
+            case 'minutes':
+                this.setMinutes(value);
+            break;
+
+            case 'seconds':
+                this.setSeconds(value);
+            break;
+
+        }
+
+        this.#isStateChanged = true;
     }
 
     /**
@@ -554,6 +582,16 @@ class Clock {
                     _this.#itemsElements[0].innerHTML = days<10 ? '0'+days : days;
                 }
             }
+        }
+
+        if(this.#isStateChanged){
+
+            _this.#itemsElements[3].innerHTML = seconds<10 ? '0'+seconds : seconds;
+            _this.#itemsElements[2].innerHTML = minutes<10 ? '0'+minutes : minutes;
+            _this.#itemsElements[1].innerHTML = hours<10 ? '0'+hours : hours;
+            _this.#itemsElements[0].innerHTML = days<10 ? '0'+days : days;
+
+            this.#isStateChanged = false;
         }
         
         _this.setCountDown(days,hours,minutes,seconds);        
