@@ -207,8 +207,7 @@ class Clock {
         const items = ['days','hours','minutes','seconds'];
         const countDownWrapper = document.createElement('div');
         
-        countDownWrapper.classList.add('count-down-clock-wrapper');
-        countDownWrapper.classList.add('flex-center');
+        countDownWrapper.classList.add('count-down-clock-wrapper','flex-center');
 
         let index = null;
         let separator = null;
@@ -256,8 +255,7 @@ class Clock {
     #createSettingsMenuComponent(...labels){
 
         const settingsWrapper = document.createElement('div');
-        settingsWrapper.classList.add('settings-wrapper');
-        settingsWrapper.classList.add('flex-center');
+        settingsWrapper.classList.add('settings-wrapper','flex-center');
 
         let index = null;
 
@@ -285,22 +283,25 @@ class Clock {
 
         this.#controlSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleControlSettings(e),false));
         this.#optionalSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleOptionSettings(e),false));
-        this.#editableItemsElements.forEach(element => element.addEventListener('change',(e) => this.#handleEditableSettings(e),false));
+        this.#editableItemsElements.forEach(element => element.addEventListener('input',(e) => this.#handleEditableSettings(e),false));
     }
 
     /**
      * 
+     * @param {Event} e 
      */
     #handlePanelVisibilty(e){
 
         let menu = e.target.getAttribute('data-menu');
-
-        this.#settingsPanelWrapper.classList.remove('hide');
+        this.#settingsPanelWrapper.classList.toggle('hide');
 
         switch(menu){
 
             case 'Edit Timer':
+
                 this.#settingsPanelWrapper.children[0].classList.remove('hide');
+                this.#settingsPanelWrapper.children[1].classList.add('hide');
+                this.#settingsPanelWrapper.children[2].classList.add('hide');
                 
                 window.setTimeout(() => {
 
@@ -308,11 +309,15 @@ class Clock {
 
                 },400);
 
-                this.#settingsPanelWrapper.children[1].classList.add('hide');
-                this.#settingsPanelWrapper.children[2].classList.add('hide');
             break
 
             case 'Controls':
+
+                if(this.#isStarted)
+                    this.#controlSettingsElements[0].classList.add('selected','start');
+                else
+                    this.#controlSettingsElements[1].classList.add('selected','stop');
+
                 this.#settingsPanelWrapper.children[0].classList.add('hide');
                 this.#settingsPanelWrapper.children[1].classList.remove('hide');
                 this.#settingsPanelWrapper.children[2].classList.add('hide');
@@ -322,9 +327,11 @@ class Clock {
                     this.#settingsPanelWrapper.children[1].classList.add('fade-in');
 
                 },400);
+
             break
 
             case 'Visual Options':
+            
                 this.#settingsPanelWrapper.children[0].classList.add('hide');
                 this.#settingsPanelWrapper.children[1].classList.add('hide');
                 this.#settingsPanelWrapper.children[2].classList.remove('hide');
@@ -334,10 +341,15 @@ class Clock {
                     this.#settingsPanelWrapper.children[2].classList.add('fade-in');
 
                 },400);
+
             break
         }
     }
 
+    /**
+     * 
+     * @param {Event} e 
+     */
     #handleControlSettings(e){
 
         let target = e.target;
@@ -361,27 +373,22 @@ class Clock {
                 firstSiblingChild = firstSiblingChild.nextSibling;
             }
 
+            target.classList.add('selected',option);
         }
-
-        target.classList.add('selected',option);
 
         switch(option){
 
             case 'start':
 
-                if(!this.#isStarted){
-   
+                if(!this.#isStarted)
                     this.start();
-                }
 
             break;
 
             case 'stop':
 
-                if(this.#isStarted){
-
+                if(this.#isStarted)
                     this.stop();
-                }
 
             break;
 
@@ -407,30 +414,28 @@ class Clock {
 
         let target = e.target;
         let option = target.getAttribute('data-option');
-        let value = parseInt(target.value) || 1;
-
-        target.value = value;
+        let value = parseInt(target.value)<=0 || isNaN(parseInt(target.value)) ? 1 : parseInt(target.value);
 
         switch(option){
 
             case 'days':
-                this.setDays(value);
+                this.setDays(value<100 ? value : 90);
             break;
 
             case 'hours':
-                this.setHours(value);
+                this.setHours(value<=24 ? value : 24);
             break;
 
             case 'minutes':
-                this.setMinutes(value);
+                this.setMinutes(value<=60 ? value : 60);
             break;
 
             case 'seconds':
-                this.setSeconds(value);
+                this.setSeconds(value<=60 ? value : 60);
             break;
-
         }
 
+        target.value = value;
         this.#isStateChanged = true;
     }
 
@@ -451,6 +456,13 @@ class Clock {
         this.#itemsElements.forEach(item => {
 
             item.setAttribute('data-value',this.#settings[item.getAttribute('data-type')]);
+        });
+                
+        this.#editableItemsElements.forEach(item => {
+                
+            item.setAttribute('data-value',this.#settings[item.getAttribute('data-option')]);
+                
+            item.value = item.getAttribute('data-value');
         });
 
         this.#save();
