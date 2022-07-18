@@ -58,13 +58,24 @@ class Clock {
     #appVersion = "V 1.0.0";
 
     /**
-     * 
+     * @type {number} #timeOut
      */
     #timeOut = null;
 
+    /**
+     * @type {boolean} #isStarted
+     */
     #isStarted = false;
 
+    /**
+     * @type {boolean} #isStateChanged
+     */
     #isStateChanged = false;
+
+    /**
+     * @type {HTMLDivElement} #hidePanelElement
+     */
+    #hidePanelElement = null;
 
     /**
      * 
@@ -246,6 +257,11 @@ class Clock {
         this.#settingsPanelWrapper = document.createElement('div');
         this.#settingsPanelWrapper.classList.add('setting-panel','hide');
 
+        this.#hidePanelElement = document.createElement('div');
+        this.#hidePanelElement.add('btn','hide-btn');
+
+        this.#settingsPanelWrapper.appendChild(this.#hidePanelElement);
+
         this.#wrapper.appendChild(this.#settingsPanelWrapper);
     }
 
@@ -294,7 +310,11 @@ class Clock {
     #handlePanelVisibilty(e){
 
         let menu = e.target.getAttribute('data-menu');
-        this.#settingsPanelWrapper.classList.toggle('hide');
+
+        if(this.#settingsPanelWrapper.classList.contains('hide')){
+
+            this.#settingsPanelWrapper.classList.remove('hide');
+        }
 
         switch(menu){
 
