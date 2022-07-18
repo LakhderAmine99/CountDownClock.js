@@ -55,4 +55,6 @@ clockCountDown.setSettings(settings);
 
 ## Preview
 
+<img src="https://github.com/LakhderAmine99/CountDownClock.js/blob/main/screenshots/Screenshot%202022-07-17%20012206.png">
+
 ## Authors
