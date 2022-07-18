@@ -206,7 +206,8 @@ class Clock {
 
             itemsWrapper.appendChild(elements[index]);
         }
-
+        
+        this.#wrapper.appendChild(this.#hidePanelElement);
         this.#settingsPanelWrapper.appendChild(itemsWrapper);
     }
 
@@ -258,9 +259,8 @@ class Clock {
         this.#settingsPanelWrapper.classList.add('setting-panel','hide');
 
         this.#hidePanelElement = document.createElement('div');
-        this.#hidePanelElement.add('btn','hide-btn');
-
-        this.#settingsPanelWrapper.appendChild(this.#hidePanelElement);
+        this.#hidePanelElement.classList.add('btn','hide-btn','flex-center','hide');
+        this.#hidePanelElement.innerHTML = '+';
 
         this.#wrapper.appendChild(this.#settingsPanelWrapper);
     }
@@ -296,6 +296,7 @@ class Clock {
     #connectEventListeners(){
 
         this.#settingsMenuLabels.forEach(label => label.addEventListener('click',(e) => this.#handlePanelVisibilty(e),false));
+        this.#hidePanelElement.addEventListener('click',(e) => this.#handleHidingPanel(e),false);
 
         this.#controlSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleControlSettings(e),false));
         this.#optionalSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleOptionSettings(e),false));
@@ -314,6 +315,11 @@ class Clock {
         if(this.#settingsPanelWrapper.classList.contains('hide')){
 
             this.#settingsPanelWrapper.classList.remove('hide');
+        }
+
+        if(this.#hidePanelElement.classList.contains('hide')){
+
+            this.#hidePanelElement.classList.remove('hide');
         }
 
         switch(menu){
@@ -365,6 +371,17 @@ class Clock {
 
             break
         }
+    }
+
+    /**
+     * 
+     */
+    #handleHidingPanel(e){
+
+        let target = e.target;
+
+        target.classList.add('hide');
+        this.#settingsPanelWrapper.classList.add('hide');
     }
 
     /**
