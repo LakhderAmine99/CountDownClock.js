@@ -284,6 +284,7 @@ class Clock {
         this.#controlSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleControlSettings(e),false));
         this.#optionalSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleOptionSettings(e),false));
         this.#editableItemsElements.forEach(element => element.addEventListener('input',(e) => this.#handleEditableSettings(e),false));
+        this.#editableItemsElements.forEach(element => element.addEventListener('focusout',(e) => this.#handleFocusOutEditableSettings(e),false));
     }
 
     /**
@@ -403,7 +404,9 @@ class Clock {
      * @param {*} e 
      */
     #handleOptionSettings(e){
-
+        /**
+         * @todo
+         */
     }
 
     /**
@@ -415,6 +418,8 @@ class Clock {
         let target = e.target;
         let option = target.getAttribute('data-option');
         let value = parseInt(target.value)<=0 || isNaN(parseInt(target.value)) ? 1 : parseInt(target.value);
+
+        this.stop();
 
         switch(option){
 
@@ -437,6 +442,17 @@ class Clock {
 
         target.value = value;
         this.#isStateChanged = true;
+    }
+
+    /**
+     * 
+     */
+    #handleFocusOutEditableSettings(){
+
+        if(!this.#isStarted){
+
+            this.start();
+        }
     }
 
     /**
