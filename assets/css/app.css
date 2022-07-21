@@ -45,6 +45,7 @@ html,body{
     border-radius: 1rem;
     overflow: hidden;
     backdrop-filter: blur(5px);
+    transition: all 0.4s ease-in-out;
 }
 
 .settings-wrapper{
@@ -194,6 +195,12 @@ html,body{
     background-color: rgba(56, 23, 0, 0.605);
     color: rgb(255, 157, 0);
     border-color: rgb(255, 157, 0);
+}
+
+.stopped{
+
+    background-color: rgba(71, 28, 0, 0.395);
+    color: rgba(255, 255, 255, 0.278);
 }
 
 .fade-in{

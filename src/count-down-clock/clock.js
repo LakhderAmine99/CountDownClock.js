@@ -48,6 +48,11 @@ class Clock {
     #wrapper = null;
 
     /**
+     * @type {HTMLElement} #clockDownWrapper
+     */
+    #countDownWrapper = null;
+
+    /**
      * @type {string} #appName
      */
     #appName = "CountDownClock";
@@ -217,9 +222,9 @@ class Clock {
     #createCountDownComponent(){
 
         const items = ['days','hours','minutes','seconds'];
-        const countDownWrapper = document.createElement('div');
-        
-        countDownWrapper.classList.add('count-down-clock-wrapper','flex-center');
+
+        this.#countDownWrapper = document.createElement('div');
+        this.#countDownWrapper.classList.add('count-down-clock-wrapper','flex-center');
 
         let index = null;
         let separator = null;
@@ -237,17 +242,17 @@ class Clock {
 
             this.#itemsElements[index].innerHTML = parseInt(this.#settings[item])<10 ? '0'+this.#settings[item] : this.#settings[item];
 
-            countDownWrapper.appendChild(this.#itemsElements[index]);
+            this.#countDownWrapper.appendChild(this.#itemsElements[index]);
 
             separator = document.createElement('div');
             separator.classList.add('countdown-sep');
             separator.innerHTML = ' : ';
 
             if(index < items.length - 1)
-                countDownWrapper.appendChild(separator);
+            this.#countDownWrapper.appendChild(separator);
         }
 
-        this.#wrapper.appendChild(countDownWrapper);
+        this.#wrapper.appendChild(this.#countDownWrapper);
     }
 
     /**
@@ -340,11 +345,15 @@ class Clock {
 
             case 'Controls':
 
-                if(this.#isStarted)
-                    this.#controlSettingsElements[0].classList.add('selected','start');
-                else
-                    this.#controlSettingsElements[1].classList.add('selected','stop');
+                if(this.#isStarted){
 
+                    this.#controlSettingsElements[0].classList.add('selected','start');
+                    this.#controlSettingsElements[1].classList.remove('selected','stop');
+                }else{
+                    this.#controlSettingsElements[1].classList.add('selected','stop');
+                    this.#controlSettingsElements[0].classList.remove('selected','start');
+                }
+                    
                 this.#settingsPanelWrapper.children[0].classList.add('hide');
                 this.#settingsPanelWrapper.children[1].classList.remove('hide');
                 this.#settingsPanelWrapper.children[2].classList.add('hide');
@@ -586,6 +595,7 @@ class Clock {
     start(){
 
         this.#isStarted = true;
+        this.#countDownWrapper.classList.remove('stopped');
         this.#timeOut = window.setInterval(() => this.#update(this),1000);
     }
 
@@ -595,6 +605,7 @@ class Clock {
     stop(){
 
         this.#isStarted = false;
+        this.#countDownWrapper.classList.add('stopped');
         window.clearInterval(this.#timeOut);
     }
 
