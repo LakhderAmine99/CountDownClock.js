@@ -300,7 +300,7 @@ class Clock {
      */
     #connectEventListeners(){
 
-        this.#settingsMenuLabels.forEach(label => label.addEventListener('click',(e) => this.#handlePanelVisibilty(e),false));
+        this.#settingsMenuLabels.forEach(label => label.addEventListener('mouseover',(e) => this.#handlePanelVisibilty(e),false));
         this.#hidePanelElement.addEventListener('click',(e) => this.#handleHidingPanel(e),false);
 
         this.#controlSettingsElements.forEach(element => element.addEventListener('click',(e) => this.#handleControlSettings(e),false));
