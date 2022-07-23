@@ -140,7 +140,7 @@ class Clock {
     #initComponents(){
 
         this.#createCountDownComponent();
-        this.#createSettingsMenuComponent('Edit Timer','Controls','Visual Options');
+        this.#createSettingsMenuComponent('Edit Timer','Controls','Theme','Size','Opacity');
 
         this.#createSettingsPanelWrapperComponent();
 
@@ -158,9 +158,23 @@ class Clock {
             subChildClass:'control-item'
         });
 
-        this.#createSettingComponent('div',this.#optionalSettingsElements,['opacity','color','size'],{
+        this.#createSettingComponent('div',this.#optionalSettingsElements,['Theme'],{
 
-            title:'visual Options',
+            title:'Theme',
+            childClass:'option-item',
+            subChildClass:'control-item'
+        });
+
+        this.#createSettingComponent('div',this.#optionalSettingsElements,['Size'],{
+
+            title:'Size',
+            childClass:'option-item',
+            subChildClass:'control-item'
+        });
+
+        this.#createSettingComponent('div',this.#optionalSettingsElements,['Opacity'],{
+
+            title:'Opacity',
             childClass:'option-item',
             subChildClass:'control-item'
         });
@@ -334,6 +348,8 @@ class Clock {
                 this.#settingsPanelWrapper.children[0].classList.remove('hide');
                 this.#settingsPanelWrapper.children[1].classList.add('hide');
                 this.#settingsPanelWrapper.children[2].classList.add('hide');
+                this.#settingsPanelWrapper.children[3].classList.add('hide');
+                this.#settingsPanelWrapper.children[4].classList.add('hide');
                 
                 window.setTimeout(() => {
 
@@ -357,6 +373,8 @@ class Clock {
                 this.#settingsPanelWrapper.children[0].classList.add('hide');
                 this.#settingsPanelWrapper.children[1].classList.remove('hide');
                 this.#settingsPanelWrapper.children[2].classList.add('hide');
+                this.#settingsPanelWrapper.children[3].classList.add('hide');
+                this.#settingsPanelWrapper.children[4].classList.add('hide');
 
                 window.setTimeout(() => {
 
@@ -366,15 +384,49 @@ class Clock {
 
             break
 
-            case 'Visual Options':
+            case 'Theme':
             
                 this.#settingsPanelWrapper.children[0].classList.add('hide');
                 this.#settingsPanelWrapper.children[1].classList.add('hide');
                 this.#settingsPanelWrapper.children[2].classList.remove('hide');
+                this.#settingsPanelWrapper.children[3].classList.add('hide');
+                this.#settingsPanelWrapper.children[4].classList.add('hide');
 
                 window.setTimeout(() => {
 
                     this.#settingsPanelWrapper.children[2].classList.add('fade-in');
+
+                },400);
+
+            break
+
+            case 'Size':
+            
+                this.#settingsPanelWrapper.children[0].classList.add('hide');
+                this.#settingsPanelWrapper.children[1].classList.add('hide');
+                this.#settingsPanelWrapper.children[2].classList.add('hide');
+                this.#settingsPanelWrapper.children[3].classList.remove('hide');
+                this.#settingsPanelWrapper.children[4].classList.add('hide');
+
+                window.setTimeout(() => {
+
+                    this.#settingsPanelWrapper.children[3].classList.add('fade-in');
+
+                },400);
+
+            break
+
+            case 'Opacity':
+            
+                this.#settingsPanelWrapper.children[0].classList.add('hide');
+                this.#settingsPanelWrapper.children[1].classList.add('hide');
+                this.#settingsPanelWrapper.children[2].classList.add('hide');
+                this.#settingsPanelWrapper.children[3].classList.add('hide');
+                this.#settingsPanelWrapper.children[4].classList.remove('hide');
+
+                window.setTimeout(() => {
+
+                    this.#settingsPanelWrapper.children[4].classList.add('fade-in');
 
                 },400);
 
